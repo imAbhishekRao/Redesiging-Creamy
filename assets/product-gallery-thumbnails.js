@@ -48,6 +48,11 @@ class ProductGalleryThumbnails {
 
     // Set initial active state
     this.updateActiveStates(gallery);
+    
+    // Also handle window resize to ensure thumbnails work after layout changes
+    window.addEventListener('resize', () => {
+      setTimeout(() => this.updateActiveStates(gallery), 100);
+    });
   }
 
   switchToMedia(gallery, mediaId) {
@@ -108,4 +113,14 @@ document.addEventListener('shopify:section:load', (event) => {
   if (event.target.querySelector('media-gallery')) {
     new ProductGalleryThumbnails();
   }
+});
+
+// Initialize on page load and after any AJAX updates
+document.addEventListener('DOMContentLoaded', () => {
+  new ProductGalleryThumbnails();
+});
+
+// Also initialize when the page is fully loaded
+window.addEventListener('load', () => {
+  new ProductGalleryThumbnails();
 }); 
