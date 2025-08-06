@@ -937,10 +937,20 @@ a.product__text {
   .thumbnail-slider .thumbnail-list {
     display: flex !important;
     grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
   
-  .thumbnail-slider .slider-button {
-    display: flex !important;
+  .thumbnail-slider .thumbnail-list::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .thumbnail-list__item {
+    scroll-snap-align: start;
+    flex-shrink: 0;
   }
 }
 
@@ -984,6 +994,16 @@ a.product__text {
     flex: 1;
     scroll-padding-left: 0.5rem;
     gap: 0.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .thumbnail-slider .thumbnail-list.slider::-webkit-scrollbar {
+    display: none;
   }
 
   .thumbnail-list__item.slider__slide {
