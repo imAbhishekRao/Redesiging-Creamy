@@ -10,18 +10,37 @@ if (!customElements.get('media-gallery')) {
           thumbnails: this.querySelector('[id^="GalleryThumbnails"]'),
         };
         this.mql = window.matchMedia('(min-width: 750px)');
-        if (!this.elements.thumbnails) return;
+        
+        // Initialize after a short delay to ensure all elements are loaded
+        setTimeout(() => {
+          this.initializeGallery();
+        }, 100);
+      }
+
+      initializeGallery() {
+        if (!this.elements.thumbnails) {
+          console.log('Thumbnails not found, gallery will work without thumbnails');
+          return;
+        }
 
         this.elements.viewer.addEventListener('slideChanged', debounce(this.onSlideChanged.bind(this), 500));
+        
+        // Add click event listeners to thumbnail buttons
         this.elements.thumbnails.querySelectorAll('[data-target]').forEach((mediaToSwitch) => {
-          mediaToSwitch
-            .querySelector('button')
-            .addEventListener('click', this.setActiveMedia.bind(this, mediaToSwitch.dataset.target, false));
+          const button = mediaToSwitch.querySelector('button');
+          if (button) {
+            button.addEventListener('click', this.setActiveMedia.bind(this, mediaToSwitch.dataset.target, false));
+          }
         });
-        if (this.dataset.desktopLayout.includes('thumbnail') && this.mql.matches) this.removeListSemantic();
+        
+        if (this.dataset.desktopLayout && this.dataset.desktopLayout.includes('thumbnail') && this.mql.matches) {
+          this.removeListSemantic();
+        }
       }
 
       onSlideChanged(event) {
+        if (!this.elements.thumbnails) return;
+        
         const thumbnail = this.elements.thumbnails.querySelector(
           `[data-target="${event.detail.currentElement.dataset.mediaId}"]`
         );
@@ -35,10 +54,14 @@ if (!customElements.get('media-gallery')) {
         if (!activeMedia) {
           return;
         }
+        
+        // Remove active class from all media items
         this.elements.viewer.querySelectorAll('[data-media-id]').forEach((element) => {
           element.classList.remove('is-active');
         });
-        activeMedia?.classList?.add('is-active');
+        
+        // Add active class to target media item
+        activeMedia.classList.add('is-active');
 
         if (prepend) {
           activeMedia.parentElement.firstChild !== activeMedia && activeMedia.parentElement.prepend(activeMedia);
@@ -77,9 +100,12 @@ if (!customElements.get('media-gallery')) {
           .querySelectorAll('button')
           .forEach((element) => element.removeAttribute('aria-current'));
         thumbnail.querySelector('button').setAttribute('aria-current', true);
-        if (this.elements.thumbnails.isSlideVisible(thumbnail, 10)) return;
+        
+        if (this.elements.thumbnails.isSlideVisible && this.elements.thumbnails.isSlideVisible(thumbnail, 10)) return;
 
-        this.elements.thumbnails.slider.scrollTo({ left: thumbnail.offsetLeft });
+        if (this.elements.thumbnails.slider) {
+          this.elements.thumbnails.slider.scrollTo({ left: thumbnail.offsetLeft });
+        }
       }
 
       announceLiveRegion(activeItem, position) {
