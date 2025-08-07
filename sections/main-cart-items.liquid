@@ -453,6 +453,60 @@
       >
         {{ 'accessibility.loading' | t }}
       </p>
+
+      <!-- Frequently Bought Together Section -->
+      <div class="cart-fbt-section" style="padding: 2rem 0;">
+        <h3 style="margin-bottom: 1rem; font-size: 1.2rem; letter-spacing: 0.05em;">Frequently Bought Together</h3>
+        <ul class="grid product-grid" style="display: flex; gap: 1rem;">
+          {%- assign cart_product_handles = cart.items | map: 'handle' -%}
+          {%- assign count = 0 -%}
+          {%- for product in collections.all.products -%}
+            {%- unless cart_product_handles contains product.handle or count >= 2 -%}
+              <li style="flex: 1; min-width: 0;">
+                {% render 'card-product', card_product: product, media_aspect_ratio: 'adapt', show_secondary_image: false, skip_styles: true, section_id: 'cart-fbt', horizontal_class: false %}
+              </li>
+              {%- assign count = count | plus: 1 -%}
+            {%- endunless -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <!-- Looking For More Section -->
+      <div class="cart-looking-more-section" style="padding: 2rem 0;">
+        <h3 style="margin-bottom: 1rem; font-size: 1.2rem; letter-spacing: 0.05em;">Looking For More</h3>
+        <ul class="grid product-grid" style="display: flex; gap: 1rem;">
+          {%- assign cart_product_handles = cart.items | map: 'handle' -%}
+          {%- assign count = 0 -%}
+          {%- for product in collections.all.products reversed -%}
+            {%- unless cart_product_handles contains product.handle or count >= 2 -%}
+              <li style="flex: 1; min-width: 0;">
+                {% render 'card-product', card_product: product, media_aspect_ratio: 'adapt', show_secondary_image: false, skip_styles: true, section_id: 'cart-looking-more', horizontal_class: false %}
+              </li>
+              {%- assign count = count | plus: 1 -%}
+            {%- endunless -%}
+          {%- endfor -%}
+        </ul>
+      </div>
+
+      <!-- Accordions Section -->
+      <div class="cart-accordion-section" style="margin-bottom: 2rem;">
+        <details style="margin-bottom: 1rem;">
+          <summary><strong>Our Policies</strong></summary>
+          <div>We care about your experience. All our policies are designed to put you first. Please contact us for any questions.</div>
+        </details>
+        <details style="margin-bottom: 1rem;">
+          <summary><strong>Terms and Conditions</strong></summary>
+          <div>By shopping with us, you agree to our terms and conditions. Please read them carefully before placing an order.</div>
+        </details>
+        <details style="margin-bottom: 1rem;">
+          <summary><strong>Shipping and Processing</strong></summary>
+          <div>We process orders within 1-2 business days. Shipping times vary by location. Tracking details will be provided upon dispatch.</div>
+        </details>
+        <details>
+          <summary><strong>Returns</strong></summary>
+          <div>Returns are accepted within 30 days of delivery. Please ensure products are unused and in original packaging.</div>
+        </details>
+      </div>
     </form>
   </div>
 </cart-items>
