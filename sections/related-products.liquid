@@ -39,6 +39,11 @@
         {% assign skip_card_product_styles = false %}
         {% for recommendation in recommendations.products %}
           <li class="grid__item">
+            {%- if section.settings.enable_quick_add -%}
+              {% assign quick_add = 'standard' %}
+            {%- else -%}
+              {% assign quick_add = 'none' %}
+            {%- endif -%}
             {% render 'card-product',
               card_product: recommendation,
               media_aspect_ratio: section.settings.image_ratio,
@@ -47,6 +52,7 @@
               show_vendor: section.settings.show_vendor,
               show_rating: section.settings.show_rating,
               skip_styles: skip_card_product_styles,
+              quick_add: quick_add,
               section_id: section.id,
               horizontal_class: true
             %}
@@ -118,6 +124,12 @@
         { "value": "1", "label": "t:sections.related-products.settings.columns_mobile.options__1.label" },
         { "value": "2", "label": "t:sections.related-products.settings.columns_mobile.options__2.label" }
       ]    
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_quick_add",
+      "default": true,
+      "label": "Enable Quick Add"
     },
     {
       "type": "color_scheme",
