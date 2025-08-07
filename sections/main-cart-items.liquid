@@ -454,25 +454,9 @@
         {{ 'accessibility.loading' | t }}
       </p>
 
-      <!-- Estimated Total & Checkout Button -->
-      <div class="cart-estimated-checkout" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; gap: 2rem; flex-wrap: wrap;">
-        <div class="cart-estimated-total" style="font-size: 1.1rem; font-weight: 600;">
-          <span>Estimated Total: </span>
-          <span>{{ cart.total_price | money_with_currency }}</span>
-        </div>
-        <div class="cart__ctas" style="text-align: right;">
-          <button
-            type="submit"
-            id="checkout-top"
-            class="cart__checkout-button button"
-            name="checkout"
-            {% if cart == empty %}disabled{% endif %}
-            form="cart"
-          >
-            Checkout Now Safely
-          </button>
-        </div>
-      </div>
+      <!-- Subtotal and Checkout section moved here as per user request -->
+      {% section 'main-cart-footer' %}
+
 
       <!-- Frequently Bought Together Section -->
       <div class="cart-fbt-section" style="padding: 2rem 0;">
