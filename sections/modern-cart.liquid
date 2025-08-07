@@ -445,43 +445,77 @@
         <div class="modern-cart__view-bag">View Bag</div>
       </div>
 
-      <!-- Frequently Bought Together -->
-      <div class="modern-cart__recommendations">
-        <h2 class="modern-cart__recommendations-title">FREQUENTLY BOUGHT TOGETHER</h2>
-        <div class="modern-cart__recommendations-grid">
-          <div class="modern-cart__recommendation-item">
-            <img src="{{ 'product-placeholder.jpg' | asset_url }}" alt="Product" class="modern-cart__recommendation-image">
-            <h3 class="modern-cart__recommendation-title">SKIMS ULTIMATE teardrop push-up bra</h3>
-            <div class="modern-cart__recommendation-price">₹45,958</div>
-            <button class="modern-cart__recommendation-heart">♥</button>
-          </div>
-          <div class="modern-cart__recommendation-item">
-            <img src="{{ 'product-placeholder.jpg' | asset_url }}" alt="Product" class="modern-cart__recommendation-image">
-            <h3 class="modern-cart__recommendation-title">FITS EVERYBODY push-up bra</h3>
-            <div class="modern-cart__recommendation-price">₹45,400</div>
-            <button class="modern-cart__recommendation-heart">♥</button>
-          </div>
-        </div>
-      </div>
+             <!-- Frequently Bought Together -->
+       <div class="modern-cart__recommendations">
+         <h2 class="modern-cart__recommendations-title">FREQUENTLY BOUGHT TOGETHER</h2>
+         <div class="modern-cart__recommendations-grid">
+           {%- if cart.items.size > 0 -%}
+             {%- assign first_cart_item = cart.items.first -%}
+             {%- assign recommendations_url = routes.product_recommendations_url | append: '?product_id=' | append: first_cart_item.product.id | append: '&intent=complementary&limit=4' -%}
+             
+             <script>
+               fetch('{{ recommendations_url }}')
+                 .then(response => response.json())
+                 .then(data => {
+                   const recommendationsContainer = document.querySelector('.modern-cart__recommendations-grid');
+                   if (data.products && data.products.length > 0) {
+                     recommendationsContainer.innerHTML = '';
+                     data.products.forEach(product => {
+                       const productCard = `
+                         <div class="modern-cart__recommendation-item">
+                           <img src="${product.featured_image}" alt="${product.title}" class="modern-cart__recommendation-image">
+                           <h3 class="modern-cart__recommendation-title">${product.title}</h3>
+                           <div class="modern-cart__recommendation-price">${product.price}</div>
+                           <button class="modern-cart__recommendation-heart" onclick="addToCart(${product.id})">♥</button>
+                         </div>
+                       `;
+                       recommendationsContainer.innerHTML += productCard;
+                     });
+                   }
+                 })
+                 .catch(error => {
+                   console.error('Error fetching recommendations:', error);
+                 });
+             </script>
+           {%- endif -%}
+         </div>
+       </div>
 
-      <!-- Looking for More -->
-      <div class="modern-cart__recommendations">
-        <h2 class="modern-cart__recommendations-title">LOOKING FOR MORE ?</h2>
-        <div class="modern-cart__recommendations-grid">
-          <div class="modern-cart__recommendation-item">
-            <img src="{{ 'product-placeholder.jpg' | asset_url }}" alt="Product" class="modern-cart__recommendation-image">
-            <h3 class="modern-cart__recommendation-title">SKIMS ULTIMATE teardrop push-up bra</h3>
-            <div class="modern-cart__recommendation-price">₹45,958</div>
-            <button class="modern-cart__recommendation-heart">♥</button>
-          </div>
-          <div class="modern-cart__recommendation-item">
-            <img src="{{ 'product-placeholder.jpg' | asset_url }}" alt="Product" class="modern-cart__recommendation-image">
-            <h3 class="modern-cart__recommendation-title">FITS EVERYBODY push-up bra</h3>
-            <div class="modern-cart__recommendation-price">₹45,400</div>
-            <button class="modern-cart__recommendation-heart">♥</button>
-          </div>
-        </div>
-      </div>
+             <!-- Looking for More -->
+       <div class="modern-cart__recommendations">
+         <h2 class="modern-cart__recommendations-title">LOOKING FOR MORE ?</h2>
+         <div class="modern-cart__recommendations-grid" id="looking-for-more-grid">
+           {%- if cart.items.size > 0 -%}
+             {%- assign first_cart_item = cart.items.first -%}
+             {%- assign more_recommendations_url = routes.product_recommendations_url | append: '?product_id=' | append: first_cart_item.product.id | append: '&intent=complementary&limit=4&offset=4' -%}
+             
+             <script>
+               fetch('{{ more_recommendations_url }}')
+                 .then(response => response.json())
+                 .then(data => {
+                   const moreContainer = document.getElementById('looking-for-more-grid');
+                   if (data.products && data.products.length > 0) {
+                     moreContainer.innerHTML = '';
+                     data.products.forEach(product => {
+                       const productCard = `
+                         <div class="modern-cart__recommendation-item">
+                           <img src="${product.featured_image}" alt="${product.title}" class="modern-cart__recommendation-image">
+                           <h3 class="modern-cart__recommendation-title">${product.title}</h3>
+                           <div class="modern-cart__recommendation-price">${product.price}</div>
+                           <button class="modern-cart__recommendation-heart" onclick="addToCart(${product.id})">♥</button>
+                         </div>
+                       `;
+                       moreContainer.innerHTML += productCard;
+                     });
+                   }
+                 })
+                 .catch(error => {
+                   console.error('Error fetching more recommendations:', error);
+                 });
+             </script>
+           {%- endif -%}
+         </div>
+       </div>
 
       <!-- Policies -->
       <div class="modern-cart__policies">
@@ -506,23 +540,42 @@
   </div>
 </cart-items>
 
-<script>
-function updateQuantity(index, quantity) {
-  if (quantity < 1) return;
-  
-  const form = document.getElementById('cart');
-  const input = form.querySelector(`input[data-index="${index}"]`);
-  input.value = quantity;
-  form.submit();
-}
+ <script>
+ function updateQuantity(index, quantity) {
+   if (quantity < 1) return;
+   
+   const form = document.getElementById('cart');
+   const input = form.querySelector(`input[data-index="${index}"]`);
+   input.value = quantity;
+   form.submit();
+ }
 
-function removeItem(index) {
-  const form = document.getElementById('cart');
-  const input = form.querySelector(`input[data-index="${index}"]`);
-  input.value = 0;
-  form.submit();
-}
-</script>
+ function removeItem(index) {
+   const form = document.getElementById('cart');
+   const input = form.querySelector(`input[data-index="${index}"]`);
+   input.value = 0;
+   form.submit();
+ }
+
+ function addToCart(productId) {
+   const formData = new FormData();
+   formData.append('id', productId);
+   formData.append('quantity', 1);
+   
+   fetch('/cart/add.js', {
+     method: 'POST',
+     body: formData
+   })
+   .then(response => response.json())
+   .then(data => {
+     // Reload the page to update cart
+     window.location.reload();
+   })
+   .catch(error => {
+     console.error('Error adding to cart:', error);
+   });
+ }
+ </script>
 
 {% schema %}
 {
