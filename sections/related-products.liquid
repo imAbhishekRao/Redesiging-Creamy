@@ -43,7 +43,7 @@
         {% for recommendation in recommendations.products %}
           <li class="grid__item">
             {%- if section.settings.enable_quick_add -%}
-              {% assign quick_add = 'bulk' %}
+              {% assign quick_add = 'standard' %}
             {%- else -%}
               {% assign quick_add = 'none' %}
             {%- endif -%}
@@ -69,7 +69,6 @@
   </product-recommendations>
   {%- if section.settings.enable_quick_add -%}
     <script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
-    <script src="{{ 'quick-add-bulk.js' | asset_url }}" defer="defer"></script>
   {%- endif -%}
   {% if section.settings.image_shape == 'arch' %}
     {{ 'mask-arch.svg' | inline_asset_content }}
