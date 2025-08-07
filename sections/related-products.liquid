@@ -2,6 +2,9 @@
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'section-related-products.css' | asset_url | stylesheet_tag }}
 {{ 'component-complementary-products.css' | asset_url | stylesheet_tag }}
+{%- if section.settings.enable_quick_add -%}
+  {{ 'quick-add.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
 
 {% if section.settings.image_shape == 'blob' %}
   {{ 'mask-blobs.css' | asset_url | stylesheet_tag }}
@@ -40,7 +43,7 @@
         {% for recommendation in recommendations.products %}
           <li class="grid__item">
             {%- if section.settings.enable_quick_add -%}
-              {% assign quick_add = 'standard' %}
+              {% assign quick_add = 'bulk' %}
             {%- else -%}
               {% assign quick_add = 'none' %}
             {%- endif -%}
@@ -54,7 +57,8 @@
               skip_styles: skip_card_product_styles,
               quick_add: quick_add,
               section_id: section.id,
-              horizontal_class: true
+              horizontal_class: true,
+              horizontal_quick_add: true
             %}
           </li>
         
@@ -63,6 +67,10 @@
       </ul>
     {% endif %}
   </product-recommendations>
+  {%- if section.settings.enable_quick_add -%}
+    <script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'quick-add-bulk.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
   {% if section.settings.image_shape == 'arch' %}
     {{ 'mask-arch.svg' | inline_asset_content }}
   {%- endif -%}
