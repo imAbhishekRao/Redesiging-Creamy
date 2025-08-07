@@ -454,6 +454,20 @@
         {{ 'accessibility.loading' | t }}
       </p>
 
+      <!-- Checkout Button (moved here by request) -->
+      <div class="cart__ctas" style="margin-bottom: 2rem; text-align: right;">
+        <button
+          type="submit"
+          id="checkout-top"
+          class="cart__checkout-button button"
+          name="checkout"
+          {% if cart == empty %}disabled{% endif %}
+          form="cart"
+        >
+          {{ 'sections.cart.checkout' | t }}
+        </button>
+      </div>
+
       <!-- Frequently Bought Together Section -->
       <div class="cart-fbt-section" style="padding: 2rem 0;">
         <h3 style="margin-bottom: 1rem; font-size: 1.2rem; letter-spacing: 0.05em;">Frequently Bought Together</h3>
